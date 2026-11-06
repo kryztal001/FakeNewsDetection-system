@@ -109,7 +109,7 @@ with app.app_context():
 
 @app.route("/")
 def home():
-    return redirect(url_for("detect"))
+    return redirect(url_for("dashboard"))
 
 
 # =====================================================
