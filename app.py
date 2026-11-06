@@ -21,9 +21,12 @@ load_dotenv()
 
 # Tesseract OCR installation path on Windows.
 # Change this path only if Tesseract is installed elsewhere.
-pytesseract.pytesseract.tesseract_cmd = (
-    r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-)
+if os.name == "nt":
+    pytesseract.pytesseract.tesseract_cmd = (
+        r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+    )
+else:
+    pytesseract.pytesseract.tesseract_cmd = "tesseract"
 
 # =====================================================
 # FLASK CONFIGURATION
