@@ -1,0 +1,239 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+Fake News Detection System 
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-0">
+
+    <div class="card shadow-lg border-0.1">
+
+        <div class="card-body">
+
+            <h2 class="text-center text-primary mb-0">
+                📰 Fake News Detection
+            </h2>
+
+            <p class="text-muted text-center">
+                Analyze the article and search online
+                for related news reports.
+            </p>
+
+            <form method="POST" onsubmit="showLoading()">
+
+                <div class="mb-0">
+                    <label for="title" class="form-label fw-bold">
+                        News Headline (Optional)
+                    </label>
+
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        class="form-control"
+                        placeholder="Enter the news headline..."
+                        value="{{ title or '' }}">
+                </div> 
+
+                <div class="mb-0">
+
+                    <label for="news" class="form-label fw-bold">
+                        Paste News Article
+                    </label>
+
+                    <textarea
+                        id="news"
+                        name="news"
+                        class="form-control"
+                        rows="10"
+                        placeholder="Paste a news article here..."
+                        required
+                        oninput="countCharacters()">{{ news or '' }}</textarea>
+
+                </div>
+
+                <p id="counter" class="text-muted">
+                    Characters: 0
+                </p>
+
+                <div class="d-flex justify-content-center gap-2 flex-wrap mt-0">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary px-4">
+                         Analyze News
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary px-4"
+                        onclick="clearText()">
+                        🗑 Clear
+                    </button>
+
+                </div>
+
+            </form>
+
+            <div id="loading"
+                 class="text-center mt-4"
+                 style="display:none;">
+
+                <div class="spinner-border text-primary"
+                     role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+
+                <h5 class="mt-3">
+                    🔍 Analyzing article and searching online...
+                </h5>
+
+                <p class="text-muted">
+                    This may take a few seconds.
+                </p>
+
+            </div>
+
+            {% if confidence is not none %}
+
+            <hr class="my-4">
+
+            <h4 class="text-center mb-3">
+                🤖Prediction
+            </h4>
+
+            {% if "Real News" in prediction %}
+
+                <div class="alert alert-success text-center">
+                    <h3>{{ prediction }}</h3>
+                    <h5>Model Confidence: {{ confidence }}%</h5>
+                </div>
+
+            {% else %}
+
+                <div class="alert alert-danger text-center">
+                    <h3>{{ prediction }}</h3>
+                    <h5>Model Confidence: {{ confidence }}%</h5>
+                </div>
+
+            {% endif %}
+
+            <p class="small text-muted text-center">
+                Model confidence is not proof that an article is true or false.
+            </p>
+
+            {% elif prediction %}
+
+                <div class="alert alert-warning mt-4 text-center">
+                    {{ prediction }}
+                </div>
+
+            {% endif %}
+
+
+            {% if online_message %}
+
+            <hr class="my-4">
+
+            <h4 class="mb-3">
+                🌐 Online News Verification
+            </h4>
+
+            <div class="alert alert-info">
+                {{ online_message }}
+            </div>
+
+                {% if online_articles %}
+
+                    <p class="text-muted">
+                        Review these related articles and compare their
+                        details with the submitted news.
+                    </p>
+
+                    {% for article in online_articles %}
+
+                    <div class="card mb-3 border shadow-sm">
+
+                        <div class="card-body">
+
+                            <h5 class="card-title">
+                                {{ article.title }}
+                            </h5>
+
+                            <p class="text-muted small mb-2">
+                                Source: {{ article.source }}
+                            </p>
+
+                            {% if article.published_at %}
+                            <p class="text-muted small mb-2">
+                                Published: {{ article.published_at }}
+                            </p>
+                            {% endif %}
+
+                            {% if article.description %}
+                            <p class="card-text">
+                                {{ article.description }}
+                            </p>
+                            {% endif %}
+
+                            {% if article.url %}
+                            <a
+                                href="{{ article.url }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="btn btn-outline-primary btn-sm">
+                                Read Original Article ↗
+                            </a>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <p class="text-muted">
+                        No related articles are currently displayed.
+                        This does not mean the submitted news is fake.
+                    </p>
+
+                {% endif %}
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+function countCharacters() {
+    const text = document.getElementById("news").value;
+
+    document.getElementById("counter").textContent =
+        "Characters: " + text.length;
+}
+
+function clearText() {
+    document.getElementById("news").value = "";
+    document.getElementById("title").value = "";
+
+    countCharacters();
+}
+
+function showLoading() {
+    document.getElementById("loading").style.display = "block";
+}
+
+window.addEventListener("load", countCharacters);
+
+</script>
+
+{% endblock %}

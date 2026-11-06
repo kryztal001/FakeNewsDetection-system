@@ -1,0 +1,171 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+Fake News Detection System
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="card shadow-lg border-0.1">
+
+        <div class="card-body p-4">
+
+            <h2 class="text-center text-success mb-4">
+                📄 Upload News File
+            </h2>
+
+            <p class="text-center text-muted">
+                Upload a TXT or PDF article for analysis
+                and online news verification.
+            </p>
+
+            <form method="POST" enctype="multipart/form-data">
+
+                <div class="mb-4">
+
+                    <label for="file" class="form-label fw-bold">
+                        Select a TXT or PDF File
+                    </label>
+
+                    <input
+                        type="file"
+                        id="file"
+                        name="file"
+                        class="form-control"
+                        accept=".txt,.pdf"
+                        required>
+
+                    <small class="text-muted">
+                        <!-- Supported formats: TXT and PDF. -->
+                    </small>
+
+                </div>
+
+                <div class="text-center">
+
+                    <button
+                        type="submit"
+                        class="btn btn-success px-4 me-2">
+                        📂 Upload & Analyze
+                    </button>
+
+                    <!-- <button
+                        type="reset"
+                        class="btn btn-outline-secondary px-4">
+                        🗑 Clear
+                    </button> -->
+
+                </div>
+
+            </form>
+
+            {% if prediction %}
+
+                <hr class="my-4">
+
+                {% if "Real News" in prediction %}
+
+                    <div class="alert alert-success text-center">
+                        <h3>{{ prediction }}</h3>
+                        <h5>Model Confidence: {{ confidence }}%</h5>
+                    </div>
+
+                {% else %}
+
+                    <div class="alert alert-danger text-center">
+                        <h3>{{ prediction }}</h3>
+                        <h5>Model Confidence: {{ confidence }}%</h5>
+                    </div>
+
+                {% endif %}
+
+                <p class="text-muted text-center small">
+                    <!-- This is an AI prediction, not proof that the
+                    news is true or false. -->
+                </p>
+
+            {% endif %}
+
+
+            {% if online_message %}
+
+                <hr class="my-4">
+
+                <h4 class="mb-3">
+                    🌐 Online News Verification
+                </h4>
+
+                <div class="alert alert-info">
+                    {{ online_message }}
+                </div>
+
+                {% if online_articles %}
+
+                    <p class="text-muted">
+                        Review the sources and compare their reports
+                        with the contents of your uploaded file.
+                    </p>
+
+                    {% for article in online_articles %}
+
+                        <div class="card shadow-sm mb-3">
+
+                            <div class="card-body">
+
+                                <h5 class="card-title">
+                                    {{ article.title }}
+                                </h5>
+
+                                <p class="text-muted small mb-2">
+                                    Source: {{ article.source }}
+                                </p>
+
+                                {% if article.published_at %}
+                                    <p class="text-muted small">
+                                        Published: {{ article.published_at }}
+                                    </p>
+                                {% endif %}
+
+                                {% if article.description %}
+                                    <p class="card-text">
+                                        {{ article.description }}
+                                    </p>
+                                {% endif %}
+
+                                {% if article.url %}
+                                    <a
+                                        href="{{ article.url }}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="btn btn-outline-primary btn-sm">
+                                        Read Original Article ↗
+                                    </a>
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <p class="text-muted">
+                        No related online articles were found.
+                        This does not automatically mean the news is fake.
+                    </p>
+
+                {% endif %}
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,162 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+Fake News Detection System
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+    <div class="card shadow-lg border-0.1">
+        <div class="card-body p-4">
+
+            <h2 class="text-center text-primary mb-4">
+                🖼 Upload Image for Fake News Detection
+            </h2>
+
+            <p class="text-center text-muted">
+                Upload a news image to extract its text, analyze it
+        , and search online for related reports.
+            </p>
+
+            <form method="POST" enctype="multipart/form-data">
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">
+                        Select News Image
+                    </label>
+
+                    <input
+                        type="file"
+                        class="form-control"
+                        name="image"
+                        accept=".jpg,.jpeg,.png"
+                        required>
+                </div>
+
+                <div class="text-center">
+                    <button
+                        type="submit"
+                        class="btn btn-primary px-4">
+                         Analyze Image
+                    </button>
+                </div>
+            </form>
+
+            {% if image_path %}
+                <hr class="my-4">
+
+                <h4>🖼 Uploaded Image</h4>
+
+                <div class="text-center mb-4">
+                    <img
+                        src="{{ image_path }}"
+                        alt="Uploaded news article"
+                        class="img-fluid rounded shadow"
+                        style="max-height: 500px;">
+                </div>
+            {% endif %}
+
+            {% if extracted_text and extracted_text.strip() %}
+                <hr class="my-4">
+
+                <h4>📄 Extracted Text</h4>
+
+                <div class="alert alert-light border"
+                     style="max-height: 350px;
+                            overflow-y: auto;
+                            white-space: pre-wrap;
+                            overflow-wrap: anywhere;">{{ extracted_text }}</div>
+
+            {% elif image_path %}
+                <div class="alert alert-warning mt-3">
+                    No text was extracted from this image.
+                    Try a clearer image with larger, sharper text.
+                </div>
+            {% endif %}
+
+            {% if prediction %}
+                <hr class="my-4">
+
+                <div class="alert alert-info text-center mt-4">
+                    <h3>{{ prediction }}</h3>
+                    <h5>Model Confidence: {{ confidence }}%</h5>
+
+                    <p class="mb-0">
+                        <!-- This is a machine-learning prediction,
+                        not proof that the news is true or false. -->
+                    </p>
+                </div>
+            {% endif %}
+
+            {% if online_message %}
+                <hr class="my-4">
+
+                <h4 class="mb-3">
+                    🌐 Online News Verification
+                </h4>
+
+                <div class="alert alert-info">
+                    {{ online_message }}
+                </div>
+
+                {% if online_articles %}
+
+                    <p class="text-muted">
+                        Review these articles and compare their
+                        claims, dates, and details with the text
+                        extracted from your image.
+                    </p>
+
+                    {% for article in online_articles %}
+                        <div class="card shadow-sm mb-3">
+                            <div class="card-body">
+
+                                <h5 class="card-title">
+                                    {{ article.title }}
+                                </h5>
+
+                                <p class="text-muted small mb-2">
+                                    Source: {{ article.source }}
+                                </p>
+
+                                {% if article.published_at %}
+                                    <p class="text-muted small">
+                                        Published: {{ article.published_at }}
+                                    </p>
+                                {% endif %}
+
+                                {% if article.description %}
+                                    <p class="card-text">
+                                        {{ article.description }}
+                                    </p>
+                                {% endif %}
+
+                                {% if article.url %}
+                                    <a
+                                        href="{{ article.url }}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="btn btn-outline-primary btn-sm">
+                                        Read Original Article ↗
+                                    </a>
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                {% else %}
+                    <p class="text-muted">
+                        <!-- No related online articles were found.
+                        This does not automatically mean the news is fake. -->
+                    </p>
+                {% endif %}
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

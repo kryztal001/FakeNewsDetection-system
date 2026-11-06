@@ -1,0 +1,11 @@
+Flask
+Flask-SQLAlchemy
+PyPDF2
+joblib
+numpy
+scikit-learn
+requests
+python-dotenv
+pytesseract
+Pillow
+gunicorn
